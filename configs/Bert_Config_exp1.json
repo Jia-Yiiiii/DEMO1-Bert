@@ -1,0 +1,13 @@
+{
+    "model_name": "bert-base-chinese",
+    "data_path": "./data/train_3k.txt",
+    "dev_path": "./data/dev_1k.txt",
+    "test_path": "./data/test_1k.txt",
+    "learning_rate": 2e-5,
+    "batch_size": 16,
+    "epochs": 10,
+    "max_len": 128,
+    "patience": 3,
+    "seed": 42
+
+}
