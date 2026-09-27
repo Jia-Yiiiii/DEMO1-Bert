@@ -46,7 +46,7 @@ class Metrics:
         return correct / len(truths)
 
     def plot(self, truths, preds):
-        plt.rcParams['font.sans-serif'] = ['SimHei']
+        plt.rcParams['font.sans-serif'] = ['WenQuanYi Zen Hei']
         plt.rcParams['axes.unicode_minus'] = False
 
         class_names = []
