@@ -2,8 +2,7 @@ import json
 import torch
 import random
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix  
+from sklearn.metrics import classification_report
 
 def set_seed(seed=42):    
     random.seed(seed)    
