@@ -69,8 +69,9 @@ DEMO1-Bert/
 ├── configs/                 # 配置文件目录
 │   └── Bert_Config_exp1.json
 ├── model.py                 # 模型结构
-├── Predict.py               # 预测脚本
+├── predict.py               # 预测脚本
 ├── trainer.py               # 训练脚本
 ├── utils.py                 # 工具函数
 ├── requirements.txt         # 依赖
+├── data_process.py          #数据处理
 └── README.md                # 项目说明
