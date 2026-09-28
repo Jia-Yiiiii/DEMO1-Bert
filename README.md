@@ -56,7 +56,9 @@
 
 
 ### 整体分类报告
-![Uploading b2302d07500611570c4034be663a1eb2.png…]()
+
+<img width="695" height="663" alt="b2302d07500611570c4034be663a1eb2" src="https://github.com/user-attachments/assets/0f7bfcc8-8d61-4279-8340-243d05685a01" />
+
 
 
 
