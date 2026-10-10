@@ -3,7 +3,6 @@ import json
 import swanlab
 from transformers import BertTokenizer
 from torch.optim import AdamW
-import matplotlib.pyplot as plt
 from data_process import Load_Demo1_Data, get_textslabels, Myloader
 from model import BertWithDropout
 from utils import set_seed, Metrics
@@ -188,7 +187,7 @@ class Trainer:
         print("测试集准确率:", test_acc)
         swanlab.log({"test/acc": test_acc})
 
-        self.metrics.plot(all_labels, all_preds)
+        
 
     def run(self):
         self.load_data()
