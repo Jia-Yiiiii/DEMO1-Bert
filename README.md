@@ -24,10 +24,6 @@
 | `dev_1k.txt` | 1000 | 验证集 |
 | `test_1k.txt` | 1064 | 测试集 |
 
-### 数据分析
-<img width="1324" height="167" alt="数据样例" src="https://github.com/user-attachments/assets/705cac3e-63bb-4f29-8bd2-70ee0d8b7187" />
-
-读取原始数据可见每条样本包含5个字段。数据预处理阶段，将**新闻标题**与**关键词**使用中文逗号拼接，作为模型输入文本，增强分类特征。
 
 ---
 
@@ -51,7 +47,6 @@
 ---
 
 ## 三、单句预测演示
-<img width="330" height="79" alt="image" src="https://github.com/user-attachments/assets/f669e63f-f75f-4f9c-bd3d-7f7c0d7e4975" />
 
 ### 使用方式
 运行 `Predict.py`，可自定义输入文本进行推理。
