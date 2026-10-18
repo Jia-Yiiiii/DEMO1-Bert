@@ -9,7 +9,7 @@ class Predictor:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         with open(config_path, "r", encoding="utf-8") as f:
             self.config = json.load(f)
-        with open("DATA/id_label.txt", "r", encoding="utf-8") as f:
+        with open("data/id_label.txt", "r", encoding="utf-8") as f:
             lines = f.readlines()
         self.id_label = {}
         for line in lines:
