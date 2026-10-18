@@ -1,8 +1,10 @@
+import os
 import torch
 import json
 import swanlab
 from transformers import BertTokenizer
 from torch.optim import AdamW
+from sklearn.metrics import f1_score, classification_report 
 from data_process import Load_Demo1_Data, get_textslabels, Myloader
 from model import BertWithDropout
 from utils import set_seed, Metrics
@@ -22,7 +24,12 @@ class Trainer:
         self.label_id = None
         self.id_label = None
         self.metrics = None
-
+        
+        
+        self.output_dir = config.get("output_dir", "outputs/exp1")
+        os.makedirs(self.output_dir, exist_ok=True)
+        os.makedirs(os.path.join(self.output_dir, "data"), exist_ok=True)
+        os.makedirs(os.path.join(self.output_dir, "tokenizer"), exist_ok=True)
 
     def load_data(self):
         train_data = Load_Demo1_Data(self.config["data_path"])
@@ -41,11 +48,13 @@ class Trainer:
             self.label_id[unique_labels[i]] = i
             self.id_label[i] = unique_labels[i]
 
+      
         self.train_texts, self.train_labels = get_textslabels(train_data, self.label_id)
         self.dev_texts, self.dev_labels = get_textslabels(dev_data, self.label_id)
         self.test_texts, self.test_labels = get_textslabels(test_data, self.label_id)
 
-        self.metrics = Metrics(self.id_label)
+    
+        self.metrics = Metrics(self.id_label, output_dir=self.output_dir)
 
     def dataloader(self):
         tokenizer = BertTokenizer.from_pretrained(self.config["model_name"])
@@ -77,19 +86,23 @@ class Trainer:
         self.model.to(self.device)
 
     def savemodel(self):
-        torch.save(self.model.state_dict(), "best_model.pth")
+        
+        torch.save(self.model.state_dict(), os.path.join(self.output_dir, "best_model.pth"))
 
-        with open("training_config.json", "w", encoding="utf-8") as f:
+        with open(os.path.join(self.output_dir, "training_config.json"), "w", encoding="utf-8") as f:
             json.dump(self.config, f, ensure_ascii=False, indent=2)
 
-        with open("data/label_id.txt", "w", encoding="utf-8") as f:
+        with open(os.path.join(self.output_dir, "data", "label_id.txt"), "w", encoding="utf-8") as f:
             for k, v in self.label_id.items():
                 f.write(f"{k}:{v}\n")
-        with open("data/id_label.txt", "w", encoding="utf-8") as f:
+        with open(os.path.join(self.output_dir, "data", "id_label.txt"), "w", encoding="utf-8") as f:
             for k, v in self.id_label.items():
                 f.write(f"{k}:{v}\n")
+                
         tokenizer = BertTokenizer.from_pretrained(self.config["model_name"])
-        tokenizer.save_pretrained("tokenizer")
+        tokenizer.save_pretrained(os.path.join(self.output_dir, "tokenizer"))
+        
+   
 
     def train(self):
         swanlab.init(
@@ -99,7 +112,8 @@ class Trainer:
                 "batch_size": self.config["batch_size"],
                 "epochs": self.config["epochs"],
                 "model": self.config["model_name"],
-                "dropout_rate": self.config.get("dropout_rate", 0.1)
+                "dropout_rate": self.config.get("dropout_rate", 0.1),
+                "output_dir": self.output_dir  
             }
         )
 
@@ -170,8 +184,9 @@ class Trainer:
         return avg_loss, accuracy
 
     def test(self):
-        self.model.load_state_dict(torch.load("best_model.pth", map_location=self.device))
-        self.model.eval()
+        model_path = os.path.join(self.output_dir, "best_model.pth")
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        self.model.eval()        
         all_preds = []
         all_labels = []
         with torch.no_grad():
@@ -183,11 +198,26 @@ class Trainer:
                 preds = torch.argmax(logits, dim=-1)
                 all_preds.extend(preds.cpu().numpy())
                 all_labels.extend(labels.cpu().numpy())
+                
+     
         test_acc = self.metrics.accuracy(all_labels, all_preds)
-        print("测试集准确率:", test_acc)
-        swanlab.log({"test/acc": test_acc})
-
+        weighted_f1 = f1_score(all_labels, all_preds, average='weighted')
+        print(f" 测试集准确率: {test_acc:.4f} | 加权F1: {weighted_f1:.4f}")
         
+   
+        target_names = [self.id_label[i] for i in sorted(self.id_label.keys())]
+        report = classification_report(all_labels, all_preds, target_names=target_names, digits=4)
+        print("\n测试集分类报告:\n", report)
+        
+       
+        self.metrics.plot(all_labels, all_preds)
+        
+    
+        swanlab.log({
+            "test/acc": test_acc,
+            "test/weighted_f1": weighted_f1,
+            "test/classification_report": swanlab.Text(report)
+        })
 
     def run(self):
         self.load_data()
