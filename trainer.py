@@ -238,7 +238,7 @@ if __name__ == "__main__":
     config_path = args.config if os.path.isabs(args.config) else os.path.join(BASE_DIR, args.config)
     with open(config_path, "r", encoding="utf-8") as f:
         config = json.load(f)
-    set_seed(seed)
+    set_seed(config.get("seed", 42))
 
     trainer = Trainer(config)
     trainer.run()
