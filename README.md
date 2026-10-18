@@ -61,16 +61,14 @@ python predict.py
 ## 模型实验指标
 
 ### 实验过程可视化
+<img width="488" height="446" alt="image" src="https://github.com/user-attachments/assets/d0477373-8684-4371-a7bf-0d495292b13a" />
+<img width="951" height="443" alt="image" src="https://github.com/user-attachments/assets/74d37ee0-6457-40c3-8107-c749904b31c8" />
+<img width="947" height="456" alt="image" src="https://github.com/user-attachments/assets/aab5a687-85dc-4e77-8330-ba9e0dbb15a2" />
 
-![SwanLab 训练过程可视化截图1](图片URL)
-
-![SwanLab 训练过程可视化截图2](图片URL)
-
-![SwanLab 训练过程可视化截图3](图片URL)
 
 ### 分类评估报告
+<img width="707" height="547" alt="0596237445eaae764a9e7bdf975d3e21" src="https://github.com/user-attachments/assets/9dd89195-1cc8-416c-8989-9cd83ef80104" />
 
-![分类报告截图](图片URL)
 
 ### 模型效果分析
 
@@ -85,8 +83,8 @@ python predict.py
 ## 单句预测演示
 
 运行 `predict.py` 即可体验模型推理能力：
+![Uploading image.png…]()
 
-![单句预测演示截图](图片URL)
 
 ---
 
