@@ -1,6 +1,5 @@
 import os
 import torch
-import json
 from transformers import BertTokenizer
 from model import BertWithDropout
 
@@ -13,14 +12,16 @@ class Predictor:
             self.config = json.load(f)
             
         self.id_label = {}
-        with open(os.path.join(output_dir, "id_label.txt"), "r", encoding="utf-8") as f:
+        label_path = os.path.join(output_dir, "data", "id_label.txt")
+        with open(label_path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:
                     parts = line.split(':', 1)
                     self.id_label[int(parts[0])] = parts[1]
 
-        self.tokenizer = BertTokenizer.from_pretrained(output_dir)
+      
+        self.tokenizer = BertTokenizer.from_pretrained(os.path.join(output_dir, "tokenizer"))
         self.model = self._load_model(os.path.join(output_dir, "best_model.pth"))
 
     def _load_model(self, model_path):
