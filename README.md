@@ -28,18 +28,17 @@
 ---
 
 ## 二、模型实验指标
-<img width="526" height="300" alt="image" src="https://github.com/user-attachments/assets/9b2a6c15-be21-48b0-9797-c3b056d78aa6" />
-<img width="1046" height="300" alt="image" src="https://github.com/user-attachments/assets/0ebd246b-0e75-48b5-999b-826f937eacf9" />
-<img width="522" height="298" alt="image" src="https://github.com/user-attachments/assets/fb74085d-69ed-4f03-9040-0f654cc04b91" />
-<img width="536" height="302" alt="image" src="https://github.com/user-attachments/assets/d66d09fc-2906-4ad2-bf5a-7f9888bb579c" />
+<img width="483" height="458" alt="image" src="https://github.com/user-attachments/assets/f9c43f3b-265a-4602-9186-f77c6eaf92ec" />
+<img width="943" height="452" alt="image" src="https://github.com/user-attachments/assets/b612c070-623a-4510-af89-bcff7d23188b" />
+<img width="937" height="457" alt="image" src="https://github.com/user-attachments/assets/5acef213-2222-4ab5-a7e3-887fab96251f" />
+
 
 ### 分类报告
-<img width="695" height="663" alt="b2302d07500611570c4034be663a1eb2" src="https://github.com/user-attachments/assets/0f7bfcc8-8d61-4279-8340-243d05685a01" />
+<img width="707" height="547" alt="0596237445eaae764a9e7bdf975d3e21" src="https://github.com/user-attachments/assets/eb20a21d-0d69-4d36-a690-9ce8e85ac48b" />
+
 
 ### 模型效果分析
-模型最佳验证集准确率 **85.8%**，测试集准确率 **84.96%**，测试集加权平均F1值为0.85。
-- 效果较好类别：新闻汽车(F1=0.94)、新闻教育(F1=0.92)、新闻文化(F1=0.92)，文本特征区分度高。
-- 效果较差类别：股票(F1=0.65)、新闻故事(F1=0.76)、新闻财经(F1=0.70)。股票与故事类别样本数量少，存在类别不均衡问题；财经与股票语义相近，容易混淆。
+在本次 BERT 文本分类模型的测试集评估中，模型整体表现良好，加权平均 F1 分数达到 0.8389，准确率为 0.8383，表明模型具备较强的泛化能力。其中，news_car（F1=0.9353）、news_culture（F1=0.9161）和 news_sports（F1=0.9016）等类别识别效果突出，而 stock（F1=0.6207）、news_story（F1=0.7692）和 news_finance（F1=0.6667）等小样本或语义模糊类别表现相对较弱
 
 
 
@@ -49,7 +48,8 @@
 ## 三、单句预测演示
 
 ### 使用方式
-运行 `Predict.py`，可自定义输入文本进行推理。
+运行 `predict.py`，可自定义输入文本进行推理。
+<img width="342" height="55" alt="image" src="https://github.com/user-attachments/assets/6bdc7ce0-bf55-47bd-b640-a2883e533b6c" />
 
 ---
 
@@ -66,6 +66,7 @@ DEMO1-Bert/
 ├── model.py                 # 模型结构
 ├── predict.py               # 预测脚本
 ├── trainer.py               # 训练脚本
+|──modeldownload.py          #模型下载
 ├── utils.py                 # 工具函数
 ├── requirements.txt         # 依赖
 ├── data_process.py          #数据处理
