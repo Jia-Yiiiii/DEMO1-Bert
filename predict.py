@@ -6,7 +6,7 @@ from model import BertWithDropout
 
 
 class Predictor:
-    def __init__(self, output_dir="./output_model"):
+    def __init__(self, output_dir="./outputs/exp1"):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
         with open(os.path.join(output_dir, "training_config.json"), "r", encoding="utf-8") as f:
