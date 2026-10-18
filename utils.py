@@ -21,20 +21,13 @@ class Metrics:
         self.id_label = id_label
         self.output_dir = output_dir
         self.name_map = {
-            "news_story": "新闻故事",
-            "news_culture": "新闻文化",
-            "news_entertainment": "新闻娱乐",
-            "news_sports": "新闻体育",
-            "news_finance": "新闻财经",
-            "news_house": "新闻房产",
-            "news_car": "新闻汽车",
-            "news_edu": "新闻教育",
-            "news_tech": "新闻科技",
-            "news_military": "新闻军事",
-            "news_travel": "新闻旅游",
-            "news_world": "新闻国际",
-            "stock": "股票",
-            "news_agriculture": "新闻农业",
+            "news_story": "新闻故事", "news_culture": "新闻文化",
+            "news_entertainment": "新闻娱乐", "news_sports": "新闻体育",
+            "news_finance": "新闻财经", "news_house": "新闻房产",
+            "news_car": "新闻汽车", "news_edu": "新闻教育",
+            "news_tech": "新闻科技", "news_military": "新闻军事",
+            "news_travel": "新闻旅游", "news_world": "新闻国际",
+            "stock": "股票", "news_agriculture": "新闻农业",
             "news_game": "新闻游戏",
         }
 
@@ -56,6 +49,7 @@ class Metrics:
         print(classification_report(truths, preds, target_names=class_names, digits=4))
 
         f1s = []
+        supports = [] 
         for i in range(len(class_names)):
             tp = fp = fn = 0
             for j in range(len(truths)):
@@ -66,6 +60,8 @@ class Metrics:
                 if truths[j] == i and preds[j] != i:
                     fn += 1
 
+            supports.append(tp + fn)  
+            
             if tp + fp <= 0 or tp + fn <= 0:
                 f1 = 0.0
             else:
@@ -77,3 +73,9 @@ class Metrics:
         print("\n手动计算各类别 F1:")
         for name, f1 in zip(class_names, f1s):
             print(f"  {name}: {f1:.4f}")
+
+        total_support = sum(supports)
+        weighted_f1 = sum(f * s for f, s in zip(f1s, supports)) / total_support
+        print(f"\n加权 F1 (Weighted F1): {weighted_f1:.4f}")
+        
+        return weighted_f1
