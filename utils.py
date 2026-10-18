@@ -38,7 +38,7 @@ class Metrics:
                 correct += 1
         return correct / len(truths)
 
-    def plot(self, truths, preds):
+       def plot(self, truths, preds):
         class_names = []
         for i in range(len(self.id_label)):
             en_name = self.id_label[i]
@@ -62,15 +62,16 @@ class Metrics:
 
             supports.append(tp + fn)  
             
-            if tp + fp <= 0 or tp + fn <= 0:
+            if tp + fp == 0 or tp + fn == 0:
                 f1 = 0.0
             else:
                 p = tp / (tp + fp)
                 r = tp / (tp + fn)
-                f1 = 2 * p * r / (p + r)
+                f1 = 0.0 if p + r == 0 else 2 * p * r / (p + r)
+    
             f1s.append(f1)
 
-        print("\n手动计算各类别 F1:")
+    
         for name, f1 in zip(class_names, f1s):
             print(f"  {name}: {f1:.4f}")
 
