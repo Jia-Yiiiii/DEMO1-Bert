@@ -14,12 +14,10 @@ def set_seed(seed=42):
         torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-
-
 class Metrics:
     def __init__(self, id_label, output_dir=None):
         self.id_label = id_label
-        self.output_dir = output_dir
+        self.output_dir = output_dir 
         self.name_map = {
             "news_story": "新闻故事", "news_culture": "新闻文化",
             "news_entertainment": "新闻娱乐", "news_sports": "新闻体育",
@@ -38,7 +36,7 @@ class Metrics:
                 correct += 1
         return correct / len(truths)
 
-       def plot(self, truths, preds):
+    def print_report(self, truths, preds):
         class_names = []
         for i in range(len(self.id_label)):
             en_name = self.id_label[i]
@@ -68,10 +66,9 @@ class Metrics:
                 p = tp / (tp + fp)
                 r = tp / (tp + fn)
                 f1 = 0.0 if p + r == 0 else 2 * p * r / (p + r)
-    
             f1s.append(f1)
 
-    
+        print("\n计算各类别 F1:")
         for name, f1 in zip(class_names, f1s):
             print(f"  {name}: {f1:.4f}")
 
