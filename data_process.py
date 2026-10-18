@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 
+
 class Demo1_Dataset(Dataset):
     def __init__(self, texts, labels, tokenizer, max_len):
         self.texts = texts
@@ -21,7 +22,13 @@ class Demo1_Dataset(Dataset):
             texts.append(batch[i][0])
             labels.append(batch[i][1])
 
-        x = self.tokenizer(texts, truncation=True, padding='max_length', max_length=self.max_len, return_tensors='pt')
+        x = self.tokenizer(
+            texts,
+            truncation=True,
+            padding=True,
+            max_length=self.max_len,
+            return_tensors='pt'
+        )
         return x['input_ids'], x['attention_mask'], torch.tensor(labels)
 
 
