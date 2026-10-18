@@ -83,8 +83,9 @@ python predict.py
 ## 单句预测演示
 
 运行 `predict.py` 即可体验模型推理能力：
-![Uploading image.png…]()
 
+
+<img width="351" height="107" alt="image" src="https://github.com/user-attachments/assets/d7869eb9-9fa2-4dc3-b3c1-4118fb9a53d7" />
 
 ---
 
