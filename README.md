@@ -2,11 +2,8 @@
 ## 基于 BERT 的今日头条新闻文本分类模型
 
 > 本项目基于 `bert-base-chinese` 预训练模型，完成15类中文新闻文本分类任务，搭建包含数据加载、模型训练、效果评估、单句预测的完整流水线，使用 SwanLab 对训练过程可视化记录。
-> ⚠️ 说明：模型权重文件 `best_model.pth` 文件体积较大，未上传至仓库。训练时通过 `savemodel()` 函数保存以下文件：
-> - `best_model.pth`：模型权重
-> - `training_config.json`：训练参数配置
-> - `data/label_id.txt`、`data/id_label.txt`：标签与ID双向映射文件
-> - `tokenizer`：分词器文件
+> ⚠️ 说明：模型权重文件 `best_model.pth` 文件体积较大，未上传至仓库。训练时通过 `savemodel()` 函数保存相关文件，可运行后查看
+
 
 ---
 
