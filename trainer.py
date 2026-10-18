@@ -1,13 +1,16 @@
 import os
+import argparse
 import torch
 import json
 import swanlab
 from transformers import BertTokenizer
 from torch.optim import AdamW
-from sklearn.metrics import f1_score, classification_report 
+from sklearn.metrics import f1_score, classification_report
 from data_process import Load_Demo1_Data, get_textslabels, Myloader
 from model import BertWithDropout
 from utils import set_seed, Metrics
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class Trainer:
     def __init__(self, config):
@@ -24,17 +27,23 @@ class Trainer:
         self.label_id = None
         self.id_label = None
         self.metrics = None
-        
-        
-        self.output_dir = config.get("output_dir", "outputs/exp1")
+
+     
+        raw_output_dir = config.get("output_dir", "outputs/exp1")
+        self.output_dir = raw_output_dir if os.path.isabs(raw_output_dir) else os.path.join(BASE_DIR, raw_output_dir)
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "data"), exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "tokenizer"), exist_ok=True)
 
     def load_data(self):
-        train_data = Load_Demo1_Data(self.config["data_path"])
-        dev_data = Load_Demo1_Data(self.config["dev_path"])
-        test_data = Load_Demo1_Data(self.config["test_path"])
+     
+        train_path = os.path.join(BASE_DIR, self.config["data_path"])
+        dev_path = os.path.join(BASE_DIR, self.config["dev_path"])
+        test_path = os.path.join(BASE_DIR, self.config["test_path"])
+
+        train_data = Load_Demo1_Data(train_path)
+        dev_data = Load_Demo1_Data(dev_path)
+        test_data = Load_Demo1_Data(test_path)
 
         unique_labels = []
         for item in train_data:
@@ -48,12 +57,10 @@ class Trainer:
             self.label_id[unique_labels[i]] = i
             self.id_label[i] = unique_labels[i]
 
-      
         self.train_texts, self.train_labels = get_textslabels(train_data, self.label_id)
         self.dev_texts, self.dev_labels = get_textslabels(dev_data, self.label_id)
         self.test_texts, self.test_labels = get_textslabels(test_data, self.label_id)
 
-    
         self.metrics = Metrics(self.id_label, output_dir=self.output_dir)
 
     def dataloader(self):
@@ -86,7 +93,6 @@ class Trainer:
         self.model.to(self.device)
 
     def savemodel(self):
-        
         torch.save(self.model.state_dict(), os.path.join(self.output_dir, "best_model.pth"))
 
         with open(os.path.join(self.output_dir, "training_config.json"), "w", encoding="utf-8") as f:
@@ -98,11 +104,9 @@ class Trainer:
         with open(os.path.join(self.output_dir, "data", "id_label.txt"), "w", encoding="utf-8") as f:
             for k, v in self.id_label.items():
                 f.write(f"{k}:{v}\n")
-                
+
         tokenizer = BertTokenizer.from_pretrained(self.config["model_name"])
         tokenizer.save_pretrained(os.path.join(self.output_dir, "tokenizer"))
-        
-   
 
     def train(self):
         swanlab.init(
@@ -113,7 +117,7 @@ class Trainer:
                 "epochs": self.config["epochs"],
                 "model": self.config["model_name"],
                 "dropout_rate": self.config.get("dropout_rate", 0.1),
-                "output_dir": self.output_dir  
+                "output_dir": self.output_dir
             }
         )
 
@@ -136,6 +140,7 @@ class Trainer:
                 optimizer.step()
                 total_loss += loss.item()
                 batch_count += 1
+
             avg_train_loss = total_loss / batch_count
             avg_eval_loss, eval_accuracy = self.eval()
             print("第", epoch + 1, "轮 训练loss:", avg_train_loss)
@@ -154,9 +159,11 @@ class Trainer:
                 print("最佳模型的验证准确率:", eval_accuracy)
             else:
                 self.counter += 1
+
             if self.counter >= self.config["patience"]:
                 print("第", epoch + 1, "停止")
                 break
+
         print("最好的验证准确率:", self.best_accuracy)
         self.test()
         swanlab.finish()
@@ -179,6 +186,7 @@ class Trainer:
                 preds = torch.argmax(logits, dim=-1)
                 all_preds.extend(preds.cpu().numpy())
                 all_labels.extend(labels.cpu().numpy())
+
         avg_loss = total_loss / batch_count
         accuracy = self.metrics.accuracy(all_labels, all_preds)
         return avg_loss, accuracy
@@ -186,7 +194,8 @@ class Trainer:
     def test(self):
         model_path = os.path.join(self.output_dir, "best_model.pth")
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
-        self.model.eval()        
+        self.model.eval()
+
         all_preds = []
         all_labels = []
         with torch.no_grad():
@@ -198,21 +207,17 @@ class Trainer:
                 preds = torch.argmax(logits, dim=-1)
                 all_preds.extend(preds.cpu().numpy())
                 all_labels.extend(labels.cpu().numpy())
-                
-     
+
         test_acc = self.metrics.accuracy(all_labels, all_preds)
         weighted_f1 = f1_score(all_labels, all_preds, average='weighted')
-        print(f" 测试集准确率: {test_acc:.4f} | 加权F1: {weighted_f1:.4f}")
-        
-   
+        print(f"测试集准确率: {test_acc:.4f} | 加权F1: {weighted_f1:.4f}")
+
         target_names = [self.id_label[i] for i in sorted(self.id_label.keys())]
         report = classification_report(all_labels, all_preds, target_names=target_names, digits=4)
         print("\n测试集分类报告:\n", report)
-        
-       
+
         self.metrics.plot(all_labels, all_preds)
-        
-    
+
         swanlab.log({
             "test/acc": test_acc,
             "test/weighted_f1": weighted_f1,
@@ -227,8 +232,13 @@ class Trainer:
 
 
 if __name__ == "__main__":
-    with open("configs/Bert_Config_exp1.json", "r", encoding="utf-8") as f:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str, default="configs/Bert_Config_exp1.json")
+    args = parser.parse_args()
+    config_path = args.config if os.path.isabs(args.config) else os.path.join(BASE_DIR, args.config)
+    with open(config_path, "r", encoding="utf-8") as f:
         config = json.load(f)
-    set_seed(config.get("seed", 42))
+    set_seed(seed)
+
     trainer = Trainer(config)
     trainer.run()
