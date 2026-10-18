@@ -216,7 +216,7 @@ class Trainer:
         report = classification_report(all_labels, all_preds, target_names=target_names, digits=4)
         print("\n测试集分类报告:\n", report)
 
-        self.metrics.plot(all_labels, all_preds)
+       
 
         swanlab.log({
             "test/acc": test_acc,
