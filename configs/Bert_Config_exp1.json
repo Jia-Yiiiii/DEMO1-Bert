@@ -1,5 +1,5 @@
 {
-    "model_name": "bert-base-chinese",
+    "model_name": "./bert-model",
     "data_path": "./data/train_3k.txt",
     "dev_path": "./data/dev_1k.txt",
     "test_path": "./data/test_1k.txt",
