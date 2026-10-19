@@ -11,6 +11,7 @@ from model import BertWithDropout
 from utils import set_seed, Metrics
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 class Trainer:
     def __init__(self, config):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
